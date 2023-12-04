@@ -15,21 +15,10 @@ object Day02 {
         val targetGreen = 13
         val targetBlue = 14
         var gameIdSum = 0
-        val matcher = Regex("(?<blue>\\d+) blue|(?<red>\\d+) red|(?<green>\\d+) green")
 
         input.forEachIndexed { index, line ->
             val gameId = index + 1
-            var maxRed = 0
-            var maxGreen = 0
-            var maxBlue = 0
-
-            matcher.findAll(line).forEach { matchResult ->
-                with(matchResult) {
-                    groups["red"]?.value?.let { if (it.toInt() > maxRed) maxRed = it.toInt() }
-                    groups["green"]?.value?.let { if (it.toInt() > maxGreen) maxGreen = it.toInt() }
-                    groups["blue"]?.value?.let { if (it.toInt() > maxBlue) maxBlue = it.toInt() }
-                }
-            }
+            val (maxRed, maxGreen, maxBlue) = countMaxQuantityByColor(line)
 
             if (maxRed <= targetRed && maxGreen <= targetGreen && maxBlue <= targetBlue) {
                 println("Game id: $gameId")
@@ -42,24 +31,29 @@ object Day02 {
 
     fun part2(input: List<String>): Int {
         var sumOfPowers = 0
-        val matcher = Regex("(?<blue>\\d+) blue|(?<red>\\d+) red|(?<green>\\d+) green")
 
         input.forEach { line ->
-            var maxRed = 0
-            var maxGreen = 0
-            var maxBlue = 0
-
-            matcher.findAll(line).forEach { matchResult ->
-                with(matchResult) {
-                    groups["red"]?.value?.let { if (it.toInt() > maxRed) maxRed = it.toInt() }
-                    groups["green"]?.value?.let { if (it.toInt() > maxGreen) maxGreen = it.toInt() }
-                    groups["blue"]?.value?.let { if (it.toInt() > maxBlue) maxBlue = it.toInt() }
-                }
-            }
+            val (maxRed, maxGreen, maxBlue) = countMaxQuantityByColor(line)
 
             sumOfPowers += maxRed * maxGreen * maxBlue
         }
 
         return sumOfPowers
+    }
+
+    private fun countMaxQuantityByColor(line: String): Triple<Int, Int, Int> {
+        val matcher = Regex("(?<blue>\\d+) blue|(?<red>\\d+) red|(?<green>\\d+) green")
+        var maxRed = 0
+        var maxGreen = 0
+        var maxBlue = 0
+
+        matcher.findAll(line).forEach { matchResult ->
+            with(matchResult) {
+                groups["red"]?.value?.let { if (it.toInt() > maxRed) maxRed = it.toInt() }
+                groups["green"]?.value?.let { if (it.toInt() > maxGreen) maxGreen = it.toInt() }
+                groups["blue"]?.value?.let { if (it.toInt() > maxBlue) maxBlue = it.toInt() }
+            }
+        }
+        return Triple(maxRed, maxGreen, maxBlue)
     }
 }
