@@ -16,9 +16,9 @@ object Day02 {
         val targetBlue = 14
         var gameIdSum = 0
 
-        input.forEachIndexed { index, line ->
+        input.forEachIndexed { index, game ->
             val gameId = index + 1
-            val (maxRed, maxGreen, maxBlue) = countMaxQuantityByColor(line)
+            val (maxRed, maxGreen, maxBlue) = countMaxQuantityByColor(game)
 
             if (maxRed <= targetRed && maxGreen <= targetGreen && maxBlue <= targetBlue) {
                 println("Game id: $gameId")
@@ -32,8 +32,8 @@ object Day02 {
     fun part2(input: List<String>): Int {
         var sumOfPowers = 0
 
-        input.forEach { line ->
-            val (maxRed, maxGreen, maxBlue) = countMaxQuantityByColor(line)
+        input.forEach { game ->
+            val (maxRed, maxGreen, maxBlue) = countMaxQuantityByColor(game)
 
             sumOfPowers += maxRed * maxGreen * maxBlue
         }
