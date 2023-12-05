@@ -57,33 +57,32 @@ private fun computeWonCardIds(
     }
 }
 
-private fun parseToCard(card: String): Card {
-    var currentCardPart = "CARD_ID"
-    var cardId = 0
-    val winningNumbers = mutableSetOf<Int>()
-    val potentialWinningNumbers = mutableSetOf<Int>()
+private fun parseToCard(cardString: String): Card =
+    Card(
+        cardString.parseCardId(),
+        cardString.parseWinningNumbers(),
+        cardString.parsePotentialWinningNumbers()
+    )
 
-    Regex("((\\d+)|(:)|(\\|))").findAll(card)
-        .toList()
-        .forEachIndexed { index, matchResult ->
-            val value = matchResult.value
-
-            when (value) {
-                ":" -> currentCardPart = "WINNING_NUMBERS"
-                "|" -> currentCardPart = "POTENTIALLY_WINNING_NUMBERS"
-            }
-
-            if (value.isDigit()) {
-                when (currentCardPart) {
-                    "CARD_ID" -> cardId = value.toInt()
-                    "WINNING_NUMBERS" -> winningNumbers.add(value.toInt())
-                    "POTENTIALLY_WINNING_NUMBERS" -> potentialWinningNumbers.add(value.toInt())
-                }
-            }
+private fun String.parseCardId() =
+    this.split(":")[0]
+        .let {
+            Regex("(\\d+)").find(it)!!.value.toInt()
         }
 
-    return Card(cardId, winningNumbers, potentialWinningNumbers)
-}
+private fun String.parseWinningNumbers(): Set<Int> =
+    this.split(":")[1].split("|")[0]
+        .let {
+            Regex("(\\d+)").findAll(it)
+                .map { matchResult -> matchResult.value.toInt() }
+        }.toSet()
+
+private fun String.parsePotentialWinningNumbers(): Set<Int> =
+    this.split(":")[1].split("|")[1]
+        .let {
+            Regex("(\\d+)").findAll(it)
+                .map { matchResult -> matchResult.value.toInt() }
+        }.toSet()
 
 private fun computeTotalPoints(it: Set<Int>): Int =
     if (it.isNotEmpty()) {
